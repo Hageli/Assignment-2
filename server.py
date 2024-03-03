@@ -8,6 +8,7 @@ def add_note(user_topic, note_name, user_text, timestamp):
     tree = etree.parse("db.xml")
     root = tree.getroot()
 
+    # Checking that user inputs arre not empty
     if(user_topic == ""):
         return "Note topic cannot be empty"
     elif(note_name == ""):
@@ -17,6 +18,7 @@ def add_note(user_topic, note_name, user_text, timestamp):
 
     for topic in tree.findall('topic'):
         if(topic.attrib['name'] == user_topic):
+            # Creating new elements and  adding values if topic already exists
             new_note = etree.SubElement(topic, 'note')
             new_note.set('name', note_name)
             new_text = etree.SubElement(new_note, 'text')
@@ -27,6 +29,7 @@ def add_note(user_topic, note_name, user_text, timestamp):
             tree.write("db.xml", pretty_print=True)
             return "Note added"
 
+    # Creating new topic and adding nodes/values
     new_topic = etree.SubElement(root, 'topic')
     new_topic.set('name', user_topic)
     new_note = etree.SubElement(new_topic, 'note')
@@ -43,8 +46,10 @@ def add_note(user_topic, note_name, user_text, timestamp):
 def read_xml(user_topic):
     tree = etree.parse("db.xml")
     return_array = []
+    
     for topic in tree.findall('topic'):
         if(topic.attrib['name'] == user_topic):
+            # Reading all notes if topic is found and returning the values in return_array
             for note in topic.findall('note'):
                 return_array.append([note.attrib['name'], note[0].text, note[1].text])
             return return_array
